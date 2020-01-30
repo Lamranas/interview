@@ -1,9 +1,22 @@
 package com.genesis.interview.model;
 
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
+
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.NAME,
+        property = "type")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = Freelance.class, name = "freelance"),
+        @JsonSubTypes.Type(value = Employee.class, name = "employee")
+})
+@DiscriminatorColumn(name = "TYPE_CONTACT")
 public abstract class Contact {
 
     @Id
@@ -11,10 +24,11 @@ public abstract class Contact {
     protected Long id;
     protected String firstName;
     protected String lastName;
-    @OneToOne
+    @OneToOne(orphanRemoval=true, cascade = CascadeType.ALL)
     protected Address address;
-    @OneToMany
-    protected List<Enterprise> jobs;
+
+    @ManyToMany(mappedBy = "contacts", cascade=CascadeType.ALL)
+    protected List<Company> jobs;
 
     public String getFirstName() {
         return firstName;
@@ -40,11 +54,11 @@ public abstract class Contact {
         this.address = address;
     }
 
-    public List<Enterprise> getJobs() {
-        return jobs;
+    public List<Company> getJobs() {
+        return jobs != null ? jobs : new ArrayList();
     }
 
-    public void setJobs(List<Enterprise> jobs) {
+    public void setJobs(List<Company> jobs) {
         this.jobs = jobs;
     }
 

@@ -1,14 +1,8 @@
 package com.genesis.interview.service.contact;
 
 import com.genesis.interview.model.Contact;
+import com.genesis.interview.service.CrudService;
 
-public interface ContactService {
+public interface ContactService extends CrudService<Contact> {
 
-    Contact getById(Long id);
-
-    Contact createContact(Contact contact);
-
-    Contact deleteContact(Long id);
-
-    Contact updateContact(Long id, Contact contact);
 }
